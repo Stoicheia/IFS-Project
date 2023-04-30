@@ -6,6 +6,7 @@ Created on Sun Apr 30 16:42:56 2023
 """
 
 import numpy as np
+from IFSLibrary import Tile
 
 class Tiling:
     def __init__(self, IFS, attractor, theta):
@@ -30,7 +31,12 @@ class Tiling:
 
             
     def getIteration(self, k):
-        # if iteration stored, read, else calculateIteration(k)
+        for i in range(len(self.iterations), k + 1):
+            self.iterations.append([])
+        if self.iterations[k] == []:
+            return self.calculateIteration(k)
+        else:
+            return self.iterations[k]
         pass
             
     def calculateIteration(self, k):
@@ -44,6 +50,14 @@ class Tiling:
             for j in self.theta[0:k]:
                 projectionMatrix = np.matmul(self.IFS[j].matrixInverse, projectionMatrix)
             vertices = []
+            for vertex in bigPolyVertices:
+                vertices.append(np.matmul(projectionMatrix, vertex))
+            tilePoly = Tile(vertices, sigma)
+            for existingPolygon in polygons:
+                tilePoly.subtract(existingPolygon)
+            polygons.append(tilePoly)
+        self.iterations[k] = polygons
+        return polygons
             
             
     
@@ -53,8 +67,10 @@ class Tiling:
     def omegaKPartial(self, root, target):
         result = []
         rootSum = sum(self.IFS[k].scaling for k in root)
+        if(rootSum > target):
+            return []
         for i in range(self.sigma):
-            rootPlusOne = root
+            rootPlusOne = root.copy()
             rootPlusOne.append(i)
             newSum = rootSum + self.IFS[i].scaling
             if newSum > target:
@@ -88,7 +104,7 @@ if __name__ == "__main__":
         IFS.append(
             IFSfunc(
                 matrix = A, 
-                scaling = randint(1, maxRand + 1)
+                scaling = randint(1, maxRand)
             )
         )
 
@@ -97,9 +113,9 @@ if __name__ == "__main__":
     attractors = [Polygon(points)]
 
     # Generate Theta
-    theta = [randint(0, IFSNumber) for i in IFS]
+    theta = [randint(0, IFSNumber-1) for i in IFS]
     print(theta)
 
     t = Tiling(IFS = IFS, attractor = attractors, theta = theta)
-
+    print(t.omegaK(1))
 
