@@ -5,7 +5,7 @@ Created on Sun Apr 30 16:53:40 2023
 @author: pieis
 """
 
-from shapely import Polygon
+from shapely.geometry import Polygon
 import numpy as np
 from numpy.linalg import inv
 
@@ -19,10 +19,10 @@ class Tile(Polygon):
 
 
 class IFSfunc:
-    def __init__(self, s, m):
-        self.scaling = s
-        self.matrix = m
-        self.matrixInverse = inv(m)
+    def __init__(self, scaling, matrix):
+        self.scaling = scaling
+        self.matrix = matrix
+        self.matrixInverse = inv(matrix)
     
     def apply(self, x, y):
         vec = np.array([x,y,1])
