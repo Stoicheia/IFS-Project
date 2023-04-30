@@ -22,7 +22,7 @@ class Tiling:
         self.sumTheta = []
         self.iterations = []
         for i in range(len(theta)):
-            self.sumTheta.append(sum(theta[0:i+1]))
+            self.sumTheta.append(sum([IFS[i].scaling for i in theta[0:i+1]]))
             
     def getIteration(self, k):
         # if iteration stored, read, else calculateIteration(k)
