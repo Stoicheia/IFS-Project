@@ -9,13 +9,14 @@ from shapely.geometry import Polygon
 import numpy as np
 from numpy.linalg import inv
 
-class Tile(Polygon):
-    def __init__(self, points, address):
+class Tile:
+    
+    def __init__(self, polygon, address):
+        self.polygon = polygon
         self.address = address
-        super().__init__(points)
         
     def subtract(self, other):
-        self.__init__(self.difference(other).exterior.coords.xy, self.address)
+        self.__init__(self.polygon.difference(other.polygon), self.address)
 
 
 class IFSfunc:

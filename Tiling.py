@@ -42,7 +42,10 @@ class Tiling:
     def calculateIteration(self, k):
         polygons = []
         addresses = self.omegaK(k)
-        bigPolyVertices = self.attractor.exterior.coords.xy
+        bigPolyVertices = self.attractor.polygon.exterior.coords
+        print(self.attractor.polygon)
+        print(theta)
+        
         for sigma in addresses:
             projectionMatrix = np.eye(3)
             for i in sigma:
@@ -51,11 +54,15 @@ class Tiling:
                 projectionMatrix = np.matmul(self.IFS[j].matrixInverse, projectionMatrix)
             vertices = []
             for vertex in bigPolyVertices:
-                vertices.append(np.matmul(projectionMatrix, vertex))
-            tilePoly = Tile(vertices, sigma)
+                vertices.append(np.matmul(projectionMatrix, np.array([vertex[0], vertex[1], 1])))
+            twoVertices = [(v[0], v[1]) for v in vertices]
+            tilePoly = Polygon(twoVertices)
+            tile = Tile(tilePoly, sigma)
+            print(tilePoly)
+            print(tile.address)
             for existingPolygon in polygons:
-                tilePoly.subtract(existingPolygon)
-            polygons.append(tilePoly)
+                tile.subtract(existingPolygon)
+            polygons.append(tile)
         self.iterations[k] = polygons
         return polygons
             
@@ -73,7 +80,7 @@ class Tiling:
             rootPlusOne = root.copy()
             rootPlusOne.append(i)
             newSum = rootSum + self.IFS[i].scaling
-            if newSum > target:
+            if newSum >= target:
                 result += [rootPlusOne]
             else:
                 result += self.omegaKPartial(rootPlusOne, target)
@@ -91,12 +98,12 @@ if __name__ == "__main__":
 
     # Generate IFS
     A = np.array([ # IFS matrix is fixed
-        [1, 1, 1],
-        [0, 2, 3],
+        [2, 0, 1],
+        [0, 2, 1],
         [0, 0, 1]
         ])
 
-    IFSNumber = 10;
+    IFSNumber = 4;
     maxRand = 5;
 
     IFS = []
@@ -104,18 +111,18 @@ if __name__ == "__main__":
         IFS.append(
             IFSfunc(
                 matrix = A, 
-                scaling = randint(1, maxRand)
+                scaling = 2
             )
         )
 
     # Attractors are the same
     points = [(0, 0), (1, 0), (1, 1), (0, 1)]
-    attractors = [Polygon(points)]
+    attractor = Tile(Polygon(points), [])
 
     # Generate Theta
     theta = [randint(0, IFSNumber-1) for i in IFS]
     print(theta)
 
-    t = Tiling(IFS = IFS, attractor = attractors, theta = theta)
-    print(t.omegaK(1))
+    t = Tiling(IFS = IFS, attractor = attractor, theta = theta)
+    print(t.getIteration(1))
 
