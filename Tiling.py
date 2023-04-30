@@ -7,10 +7,18 @@ Created on Sun Apr 30 16:42:56 2023
 
 class Tiling:
     def __init__(self, IFS, attractor, theta):
+        # IFS a list of [IFSfunc]. IFSfunc has scaling, apply and applyinv
         self.IFS = IFS
+
+        # List of polygons
         self.attractor = attractor
+
+        # List of integers
         self.theta = theta
+
         self.thetaLength = len(theta)
+
+        # List of theta sums
         self.sumTheta = []
         self.iterations = []
         for i in range(len(theta)):
@@ -24,7 +32,7 @@ class Tiling:
         pass
     
     def omegaK(self, k):
-        # lexicographically ordered indices
+        # lexicographically ordered indices 
         pass
     
     
