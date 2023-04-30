@@ -27,6 +27,7 @@ class Tiling:
         for i in range(len(theta)):
             s = sum([self.IFS[k].scaling for k in theta[0:i]])
             self.sumTheta.append(s)
+
             
     def getIteration(self, k):
         # if iteration stored, read, else calculateIteration(k)
@@ -65,3 +66,40 @@ class Tiling:
     
     
     
+
+if __name__ == "__main__":
+    from IFSLibrary import IFSfunc
+    import numpy as np
+    from random import randint
+    from shapely.geometry import Polygon
+
+    # Generate IFS
+    A = np.array([ # IFS matrix is fixed
+        [1, 1, 1],
+        [0, 2, 3],
+        [0, 0, 1]
+        ])
+
+    IFSNumber = 10;
+    maxRand = 5;
+
+    IFS = []
+    for i in range(IFSNumber):
+        IFS.append(
+            IFSfunc(
+                matrix = A, 
+                scaling = randint(1, maxRand + 1)
+            )
+        )
+
+    # Attractors are the same
+    points = [(0, 0), (1, 0), (1, 1), (0, 1)]
+    attractors = [Polygon(points)]
+
+    # Generate Theta
+    theta = [randint(0, IFSNumber) for i in IFS]
+    print(theta)
+
+    t = Tiling(IFS = IFS, attractor = attractors, theta = theta)
+
+
