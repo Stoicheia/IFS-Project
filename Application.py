@@ -4,13 +4,17 @@ import tkinter
 import shapely
 
 import tkinter as tk
+from tkinter import filedialog
+import json
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from IFSLibrary import *
 
+FONT = ("Helvetica", 12)
+
 class Application:
-    def __init__(self, IFS = [], attractor = [], theta =[]):
+    def __init__(self, IFS = [], attractor = [], theta = []):
         self.IFS = IFS
         self.attractor = attractor
         self.theta = theta
@@ -36,23 +40,24 @@ class Application:
         # Add previous button
         self.prev = tk.Frame(self.panel)
         self.prev.pack(side = tk.LEFT)
-        self.prev.label = tk.Label(self.prev, text = "Previous iteration"); self.prev.label.pack(side=tk.TOP)
+        tk.Label(self.prev, text = "Previous iteration").pack(side=tk.TOP)
         self.prev.prev_button = tk.Button(self.prev, text="<<", command=self.prev_iteration)
         self.prev.prev_button.pack(side=tk.BOTTOM, padx=10, pady=10)
         
         # Add next
         self.next = tk.Frame(self.panel)
         self.next.pack(side = tk.RIGHT)
-        self.next.label = tk.Label(self.next, text = "Next iteration"); self.next.label.pack(side=tk.TOP)
+        tk.Label(self.next, text = "Next iteration").pack(side=tk.TOP)
         self.next.next_button = tk.Button(self.next, text=">>", command=self.next_iteration)
         self.next.next_button.pack(side=tk.BOTTOM, padx=10, pady=10)
         
-        # Add input field
-        self.input_label = tk.Label(self.panel, text="Iteration:")
-        self.input_label.pack(side=tk.TOP, padx=10, pady=5)
-        
+        tk.Label(self.panel, text="Iteration:").pack(side=tk.TOP, padx=10, pady=5)
         self.input_entry = tk.Entry(self.panel)
         self.input_entry.pack(side=tk.TOP, padx=10, pady=5)
+
+        self.inputFrame = tk.Frame(self.panel)
+        self.inputFrame.pack(side = tk.BOTTOM)
+        self.ifs_input = IFSInput(self.inputFrame)
         
     def validate_input(self):
         value = self.input_entry.get()
@@ -78,10 +83,10 @@ class Application:
                 self.plot_iteration()
                 print("Iteration:", self.iteration)
         
-    def plot_iteration(self):
+    def plot_iteration(self, iteration):
         self.ax.clear()
-        # Add your plotting code here
         self.ax.set_title("Iteration {}".format(self.iteration))
+
         self.canvas.draw()
         
     def run(self):
@@ -90,11 +95,58 @@ class Application:
         self.error_label.pack(side=tk.TOP, padx=10, pady=5)
         
         # Plot first iteration
-        self.plot_iteration()
+        self.plot_iteration(1)
         
         # Start GUI loop
         self.root.mainloop()
         
+class IFSInput:
+    def __init__(self, frame):
+        self.frame = frame
+        tk.Label(self.frame, text = "IFS Input", font = (FONT[0], 18)).grid(row = 0, column = 0, columnspan = 2)
+        self.entries = []
+        
+        # Create input labels and fields
+        rotation_label = tk.Label(self.frame, text="Rotation")
+        rotation_label.grid(row=1, column=0)
+        rotation_entry = tk.Entry(self.frame)
+        rotation_entry.grid(row=1, column=1)
+        self.entries.append(rotation_entry)
+        
+        scaling_label = tk.Label(self.frame, text="Scaling")
+        scaling_label.grid(row=2, column=0)
+        scaling_entry = tk.Entry(self.frame)
+        scaling_entry.grid(row=2, column=1)
+        self.entries.append(scaling_entry)
+        
+        translation_label = tk.Label(self.frame, text="Translation")
+        translation_label.grid(row=3, column=0)
+        translation_entry = tk.Entry(self.frame)
+        translation_entry.grid(row=3, column=1)
+        self.entries.append(translation_entry)
+        
+        # Create submit button
+        submit_button = tk.Button(self.frame, text="Submit", command=self.submit)
+        submit_button.grid(row=4, column=1)
+    
+        # Create upload button
+        upload_button = tk.Button(self.frame, text="Upload", command=self.upload)
+        upload_button.grid(row=5, column=0, columnspan=2)
+
+    def submit(self):
+        values = [entry.get() for entry in self.entries]
+        print(values)
+
+    def upload(self):
+        filename = filedialog.askopenfilename(initialdir=".", title="Select file", filetypes=(("JSON files", "*.json"),))
+        if filename:
+            print(filename)
+            with open(filename, "r") as f:
+                data = json.load(f)
+                self.entries[0].insert(0, str(data.get("rotation", "")))
+                self.entries[1].insert(0, str(data.get("scaling", "")))
+                self.entries[2].insert(0, str(data.get("translation", "")))
+
 if __name__ == "__main__":
     app = Application()
     app.run()
