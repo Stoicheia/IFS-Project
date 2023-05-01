@@ -1,0 +1,22 @@
+{					// Application can import pre-defined Graph IFSs
+	"IFS": [ 		// Each element of "IFS" is a function (see ExFunction.json)
+		{
+			"rotation": 0,
+			"scaling" : 0.618033988749,
+			"translation": [0.3, 1]	// TODO: translations
+		},
+		{
+			"rotation": 108,
+			"scaling" : 0.618033988749,		// = golden ratio = 2/(1+sqrt(5))
+			"translation": [0.3, 1] // TODO: translations
+		},
+		{
+			"rotation": 144,
+			"scaling" : 0.618033988749, 
+			"translation": [0.3, 1]	// TODO: translations
+		}
+	],
+	"A": [			// A list of polygons which determine the initial set/initial vertices
+		[[0, 0], [1, 0], [1.272019649, 0.5]]
+	]	
+}
