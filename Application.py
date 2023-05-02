@@ -105,7 +105,7 @@ class Application:
         self.error_label.pack(side=tk.TOP, padx=10, pady=5)
         
         # Plot first iteration
-        self.plot_iteration(1)
+        # self.plot_iteration(1)
         
         # Start GUI loop
         self.root.mainloop()
@@ -150,6 +150,7 @@ class IFSInput:
     def upload(self):
         filename = filedialog.askopenfilename(initialdir=".", title="Select file", filetypes=(("JSON files", "*.json"),))
         if filename:
+            [IFS, A, theta] = Parser.parse(filename)
             print(filename)
             with open(filename, "r") as f:
                 data = json.load(f)

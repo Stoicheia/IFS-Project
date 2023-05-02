@@ -1,0 +1,68 @@
+import json
+from math import cos, sin, pi
+import numpy as np
+from shapely.geometry import Polygon
+
+from IFSLibrary import IFSfunc
+
+class Parser:
+	@staticmethod
+	def parse(filename, **kwargs):
+		IFS = []
+		A = []
+		theta = []
+
+		with open(filename, "r") as f:
+            data = json.load(f) 
+
+        if 'IFS' in data.keys():
+        	IFS, A, theta = Parser.parseIFS(data)
+    	elif: 'rotation' in data.keys():
+    		IFS.append(Parser.parseIFS(data))
+
+		return [IFS, A, theta]
+
+	@staticmethod
+	def parseFunction(data):
+		r = data['rotation']
+		s = data['scaling']
+		t = data['translation']
+
+		c = pi/180 # Degrees -> radians conversion factor
+
+		# Matrix = 	[s cos(theta),   -s sin(theta),    x_translation]
+		#			[s sin(theta),    s cos(theta),    y_translation]
+		#			[     0      ,         0      ,          1      ]
+		a = s * cos(c * r);      b = - s * sin(c * r);      e = t[0]
+		c = s * sin(c * r);      d = a;                     f = t[1]
+
+		matrix = np.array([
+			[a, b, e],
+			[c, d, f],
+			[0, 0, 1]
+		])
+
+		return IFSfunc(scaling = s, matrix = matrix)
+	
+	@staticmethod
+	def parseIFS(data):
+		IFS = []
+		for func in data['IFS']:
+			IFS.append(Parser.parseFunction(func))
+
+		A = []
+		for attractor in data['A']:
+			A.append(Polygon(attractor))
+
+		# theta = data['theta']
+		theta = []
+		for t in data['theta']:
+			if t > len(IFS) or t < 1: # ERROR: theta_i out of bounds
+				print(f"ERROR: theta_i is out of bounds.\n\tReceived {t}, but there are only {len(IFS)} functions in the IFS.")
+			else:
+				theta.append(t)
+
+		return [IFS, A, theta]
+
+
+
