@@ -41,12 +41,13 @@ class Tiling:
             
     def calculateIteration(self, k):
         polygons = []
+        print(f"k = {k} - attr:", self.attractor)
         if k == 0:
-            return [Polygon(a) for a in self.attractor]
+            return [Tile(a, []) for a in self.attractor] 
         addresses = self.omegaK(k)
-        bigPolyVertices = self.attractor.polygon.exterior.coords
-        print(self.attractor.polygon)
-        print(theta)
+        bigPolyVertices = self.attractor[0].exterior.coords
+        # print(self.attractor.polygon)
+        print(self.theta)
         
         for sigma in addresses:
             projectionMatrix = np.eye(3)

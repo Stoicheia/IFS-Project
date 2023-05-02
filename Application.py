@@ -115,8 +115,12 @@ class Application:
 
     def set_iteration(self, iteration):
         if iteration > len(self.theta):
+            self.error_label.config(text="ERROR: Iteration at maximum")
+            self.root.after(2000, self.clear_error)
             print("ERROR: Iteration at maximum")
         elif iteration < 0:
+            self.error_label.config(text="ERROR: Iteration at minimum")
+            self.root.after(2000, self.clear_error)
             print("ERROR: Iteration at minimum")
         else:
             self.iteration = iteration
@@ -128,16 +132,16 @@ class Application:
         
     def next_iteration(self):
         if self.iteration < len(self.theta):
-            if self.validate_input():
-                self.set_iteration(self.iteration + 1)
+            self.set_iteration(self.iteration + 1)
         
     def plot_iteration(self, iteration):
         self.ax.clear()
         self.ax.set_title("Iteration {}".format(self.iteration))
 
         # Plot each of the polygons provided in the 
-        polys = self.tiling.getIteration(iteration)
-        for i, poly in enumerate(polys):
+        tiles = self.tiling.getIteration(iteration)
+        for i, tile in enumerate(tiles):
+            poly = tile.polygon
             pltPoly = plt.Polygon(poly.exterior.coords[:-1], facecolor = np.random.rand(3,), alpha = 0.5)
             self.ax.add_patch(pltPoly)
 
