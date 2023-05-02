@@ -1,9 +1,9 @@
 import tkinter as tk
-# import shapely
+from shapely.geometry import Polygon, MultiPolygon
 from tkinter import filedialog
 import json
 import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 from IFSLibrary import *
 from Parser import Parser
@@ -16,15 +16,13 @@ def colourMap(n, name = 'hsv'):
 
 
 class Application:
-    def __init__(self, IFS = [], attractor = [], theta = [], default = "ExIFS.json"):
+    def __init__(self, IFS = [], attractor = [], theta = []):
         self.IFS = IFS
-        self.attractor = attractor
+        self.A = attractor
         self.theta = theta
 
         self.iteration = 0
-
-        [IFS, attractor, theta] = Parser.parse(default)
-        self.tiling = Tiling(IFS, attractor, theta)
+        self.tiling = Tiling(self.IFS, self.A, self.theta)
         
         self.root = tk.Tk()
         self.root.title("Graph IFS Plotter")
@@ -33,6 +31,9 @@ class Application:
         self.fig, self.ax = plt.subplots()
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+        self.toolbar = NavigationToolbar2Tk(self.canvas, self.root)
+        self.toolbar.update()
+        self.toolbar.pack(side=tk.TOP, fill=tk.BOTH)
 
         # Create side panel
         self.panel = tk.Frame(self.root)
@@ -127,7 +128,7 @@ class Application:
             self.plot_iteration(iteration)
         
     def prev_iteration(self):
-        if self.iteration > 1:
+        if self.iteration > 0:
             self.set_iteration(self.iteration - 1)
         
     def next_iteration(self):
@@ -142,7 +143,12 @@ class Application:
         tiles = self.tiling.getIteration(iteration)
         for i, tile in enumerate(tiles):
             poly = tile.polygon
-            pltPoly = plt.Polygon(poly.exterior.coords[:-1], facecolor = np.random.rand(3,), alpha = 0.5)
+            if type(poly) == Polygon: 
+                pltPoly = plt.Polygon(poly.exterior.coords[:-1], facecolor = np.random.rand(3,), alpha = 0.5)
+            elif type(poly) == MultiPolygon:
+                col = np.random.rand(3,)
+                for pol in poly.geoms:
+                    pltPoly = plt.Polygon(pol.exterior.coords[:-1], facecolor = col, alpha = 0.5)
             self.ax.add_patch(pltPoly)
 
         self.canvas.draw()
@@ -153,7 +159,7 @@ class Application:
         self.error_label.pack(side=tk.TOP, padx=10, pady=5)
         
         # Plot first iteration
-        # self.plot_iteration(1)
+        self.plot_iteration(0)
         
         # Start GUI loop
         self.root.mainloop()
@@ -201,5 +207,7 @@ class IFSInput:
 
 
 if __name__ == "__main__":
-    app = Application()
+    default = "ExIFS.json"
+    [IFS, attractor, theta] = Parser.parse(default)
+    app = Application(IFS, attractor, theta)
     app.run()

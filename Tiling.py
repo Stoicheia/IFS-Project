@@ -28,7 +28,6 @@ class Tiling:
         for i in range(len(theta)):
             s = sum([self.IFS[k-1].scaling for k in theta[0:i]])
             self.sumTheta.append(s)
-
             
     def getIteration(self, k):
         for i in range(len(self.iterations), k + 1):
@@ -68,8 +67,6 @@ class Tiling:
             polygons.append(tile)
         self.iterations[k] = polygons
         return polygons
-            
-            
     
     def omegaK(self, k):
         if k > 0:
@@ -91,10 +88,6 @@ class Tiling:
             else:
                 result += self.omegaKPartial(rootPlusOne, target)
         return result
-    
-    
-    
-    
 
 if __name__ == "__main__":
     from IFSLibrary import IFSfunc

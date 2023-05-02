@@ -16,6 +16,9 @@ class Tile:
         self.address = address
         
     def subtract(self, other):
+        if self.polygon.within(other.polygon):
+            print("ERRRRRRRRRRRRRRRR")
+            print(self.polygon.difference(other.polygon))
         self.__init__(self.polygon.difference(other.polygon), self.address)
 
 
