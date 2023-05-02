@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from IFSLibrary import *
+from Parser import Parser
 from Tiling import Tiling
 
 FONT = ("Helvetica", 12)
@@ -15,13 +16,14 @@ def colourMap(n, name = 'hsv'):
 
 
 class Application:
-    def __init__(self, IFS = [], attractor = [], theta = []):
+    def __init__(self, IFS = [], attractor = [], theta = [], default = "ExIFS.json"):
         self.IFS = IFS
         self.attractor = attractor
         self.theta = theta
 
-        self.iteration = 1
+        self.iteration = 0
 
+        [IFS, attractor, theta] = Parser.parse(default)
         self.tiling = Tiling(IFS, attractor, theta)
         
         self.root = tk.Tk()
@@ -57,13 +59,33 @@ class Application:
         tk.Label(self.panel, text="Iteration:").pack(side=tk.TOP, padx=10, pady=5)
         self.input_entry = tk.Entry(self.panel)
         self.input_entry.pack(side=tk.TOP, padx=10, pady=5)
+        
+        
+        # IFS Controlling
+        self.control_frame = tk.Frame(self.panel)
+        self.control_frame.pack(side = tk.TOP)
+        self.controls = IFSControl(self.control_frame)
 
+
+        # IFS Inputting
         self.inputFrame = tk.Frame(self.panel)
         self.inputFrame.pack(side = tk.BOTTOM)
         self.ifs_input = IFSInput(self.inputFrame)
-        
+        self.ifs_input.upload_button.config(command = lambda : self.updateIFS(self.ifs_input.upload()))
+
+    def updateIFS(self, ifs_parameters):
+        IFS, A, theta = ifs_parameters
+        if len(IFS) > 1:
+            self.IFS = IFS
+            self.A = A
+            self.theta = theta
+        else: 
+            self.IFS.append(IFS[0])
+        self.tiling = Tiling(IFS, A, theta)
+        self.set_iteration(0)
+
     def validate_input(self):
-        value = self.input_entry.get()
+        value = self.input_iteration.get()
         if value.isdigit() and 1 <= int(value) <= len(self.theta) and len(value) <= self.iteration+1:
             return True
         else:
@@ -73,18 +95,24 @@ class Application:
         
     def clear_error(self):
         self.error_label.config(text="")
+
+    def set_iteration(self, iteration):
+        if iteration > len(self.theta):
+            print("ERROR: Iteration at maximum")
+        elif iteration < 0:
+            print("ERROR: Iteration at minimum")
+        else:
+            self.iteration = iteration
+            self.plot_iteration(iteration)
         
     def prev_iteration(self):
         if self.iteration > 1:
-            self.iteration -= 1
-            self.plot_iteration()
+            self.set_iteration(self.iteration - 1)
         
     def next_iteration(self):
         if self.iteration < len(self.theta):
             if self.validate_input():
-                self.iteration += 1
-                self.plot_iteration()
-                print("Iteration:", self.iteration)
+                self.set_iteration(self.iteration + 1)
         
     def plot_iteration(self, iteration):
         self.ax.clear()
@@ -92,10 +120,9 @@ class Application:
 
         # Plot each of the polygons provided in the 
         polys = self.tiling.getIteration(iteration)
-        colours = colourMap(len(polys))
         for i, poly in enumerate(polys):
-            pltPoly = plt.Polygon(poly.exterior.xy, facecolor = colours[i], alpha = 0.5)
-            self.ax.add_path(pltPoly)
+            pltPoly = plt.Polygon(poly.exterior.coords[:-1], facecolor = np.random.rand(3,), alpha = 0.5)
+            self.ax.add_patch(pltPoly)
 
         self.canvas.draw()
         
@@ -133,12 +160,12 @@ class IFSInput:
         self.translation.grid(row=3, column=1)
         
         # Create submit button
-        submit_button = tk.Button(self.frame, text="Submit", command=self.submit)
-        submit_button.grid(row=4, column=1)
+        self.submit_button = tk.Button(self.frame, text="Submit", command=self.submit)
+        self.submit_button.grid(row=4, column=1)
     
         # Create upload button
-        upload_button = tk.Button(self.frame, text="Upload", command=self.upload)
-        upload_button.grid(row=5, column=0, columnspan=2)
+        self.upload_button = tk.Button(self.frame, text="Upload", command=self.upload)
+        self.upload_button.grid(row=5, column=1)
 
     def submit(self):
         entries = [self.rotation, self.scaling, self.translation]
@@ -150,13 +177,26 @@ class IFSInput:
     def upload(self):
         filename = filedialog.askopenfilename(initialdir=".", title="Select file", filetypes=(("JSON files", "*.json"),))
         if filename:
-            [IFS, A, theta] = Parser.parse(filename)
-            print(filename)
-            with open(filename, "r") as f:
-                data = json.load(f)
-                self.entries[0].insert(0, str(data.get("rotation", "")))
-                self.entries[1].insert(0, str(data.get("scaling", "")))
-                self.entries[2].insert(0, str(data.get("translation", "")))
+            return Parser.parse(filename)
+
+            # print(filename)
+            # with open(filename, "r") as f:
+            #     data = json.load(f)
+            #     self.entries[0].insert(0, str(data.get("rotation", "")))
+            #     self.entries[1].insert(0, str(data.get("scaling", "")))
+            #     self.entries[2].insert(0, str(data.get("translation", "")))
+
+class IFSControl:
+    def __init__(self, frame):
+        self.frame = frame
+        tk.Label(self.frame, text="Iteration:").pack(side=tk.TOP, padx=10, pady=5)
+        self.input_iteration = tk.Entry(self.frame)
+        self.input_iteration.pack(side=tk.TOP, padx=10, pady=5)
+
+        tk.Label(self.frame, text="Theta Input:").pack(side=tk.TOP, padx=10, pady=5)
+        self.input_theta = tk.Entry(self.frame)
+        self.input_theta.pack(side=tk.TOP, padx=10, pady=5)
+
 
 if __name__ == "__main__":
     app = Application()

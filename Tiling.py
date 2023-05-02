@@ -4,7 +4,7 @@ Created on Sun Apr 30 16:42:56 2023
 
 @author: pieis
 """
-
+from shapely.geometry import Polygon
 import numpy as np
 from IFSLibrary import Tile
 
@@ -41,6 +41,8 @@ class Tiling:
             
     def calculateIteration(self, k):
         polygons = []
+        if k == 0:
+            return [Polygon(a) for a in self.attractor]
         addresses = self.omegaK(k)
         bigPolyVertices = self.attractor.polygon.exterior.coords
         print(self.attractor.polygon)
@@ -69,7 +71,10 @@ class Tiling:
             
     
     def omegaK(self, k):
-        return self.omegaKPartial([], self.sumTheta[k])
+        if k > 0:
+            return self.omegaKPartial([], self.sumTheta[k])
+        elif k == 0:
+            return []
     
     def omegaKPartial(self, root, target):
         result = []
