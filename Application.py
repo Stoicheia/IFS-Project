@@ -42,24 +42,36 @@ class Application:
         self.panel.pack(side=tk.RIGHT, fill=tk.Y)
         
         # ADD BUTTONS
+        self.iteration_frame = tk.Frame(self.panel)
+        self.iteration_frame.pack(side = tk.TOP, fill = tk.X)
+
         # Add previous button
-        self.prev = tk.Frame(self.panel)
-        self.prev.pack(side = tk.LEFT)
-        tk.Label(self.prev, text = "Previous iteration").pack(side=tk.TOP)
-        self.prev.prev_button = tk.Button(self.prev, text="<<", command=self.prev_iteration)
-        self.prev.prev_button.pack(side=tk.BOTTOM, padx=10, pady=10)
+        prev_frame = tk.Frame(self.iteration_frame)
+        prev_frame.pack(side = tk.LEFT)
+        tk.Label(prev_frame, text = "Previous iteration").pack(side=tk.TOP)
+        self.prev_button = tk.Button(prev_frame, text="<<", command=self.prev_iteration)
+        self.prev_button.pack(side=tk.BOTTOM, padx=10, pady=10)
         
         # Add next
-        self.next = tk.Frame(self.panel)
-        self.next.pack(side = tk.RIGHT)
-        tk.Label(self.next, text = "Next iteration").pack(side=tk.TOP)
-        self.next.next_button = tk.Button(self.next, text=">>", command=self.next_iteration)
-        self.next.next_button.pack(side=tk.BOTTOM, padx=10, pady=10)
+        next_frame = tk.Frame(self.iteration_frame)
+        next_frame.pack(side = tk.RIGHT)
+        tk.Label(next_frame, text = "Next iteration").pack(side=tk.TOP)
+        self.next_button = tk.Button(next_frame, text=">>", command=self.next_iteration)
+        self.next_button.pack(side=tk.BOTTOM, padx=10, pady=10)
         
-        tk.Label(self.panel, text="Iteration:").pack(side=tk.TOP, padx=10, pady=5)
-        self.input_entry = tk.Entry(self.panel)
-        self.input_entry.pack(side=tk.TOP, padx=10, pady=5)
-        
+        # Add a jump to iteration button
+        jump_frame = tk.Frame(self.iteration_frame)
+        jump_frame.pack(side = tk.LEFT, fill = tk.X)
+        tk.Label(jump_frame, text="Jump to Iteration:").pack(side = tk.TOP, padx=10, pady=5)
+        self.iter_entry = tk.Entry(jump_frame)
+        self.iter_entry.pack(side=tk.TOP, padx=10, pady=5)
+        def iter_jump():
+            if self.validate_input():
+                self.set_iteration(int(self.iter_entry.get()))
+                self.iter_entry.delete(0, tk.END)
+
+        self.jump_iter_button = tk.Button(jump_frame, text = "=>", command = iter_jump)
+        self.jump_iter_button.pack(side = tk.BOTTOM)
         
         # IFS Controlling
         self.control_frame = tk.Frame(self.panel)
@@ -85,11 +97,11 @@ class Application:
         self.set_iteration(0)
 
     def validate_input(self):
-        value = self.input_iteration.get()
-        if value.isdigit() and 1 <= int(value) <= len(self.theta) and len(value) <= self.iteration+1:
+        value = self.iter_entry.get()
+        if value.isdigit() and 0 <= int(value) <= len(self.theta) and len(value) <= self.iteration+1:
             return True
         else:
-            self.error_label.config(text="Input must be an integer between 1 and {} with at most {} digits".format(len(self.theta), self.iteration+1))
+            self.error_label.config(text="Input must be an integer between 0 and {}".format(len(self.theta)))
             self.root.after(2000, self.clear_error)
             return False
         

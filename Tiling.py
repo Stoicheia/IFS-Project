@@ -26,7 +26,7 @@ class Tiling:
         self.sumTheta = []
         self.iterations = []
         for i in range(len(theta)):
-            s = sum([self.IFS[k].scaling for k in theta[0:i]])
+            s = sum([self.IFS[k-1].scaling for k in theta[0:i]])
             self.sumTheta.append(s)
 
             
