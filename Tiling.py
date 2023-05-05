@@ -5,6 +5,7 @@ Created on Sun Apr 30 16:42:56 2023
 @author: pieis
 """
 from shapely.geometry import Polygon
+from shapely.ops import unary_union
 import numpy as np
 from IFSLibrary import Tile
 
@@ -63,9 +64,10 @@ class Tiling:
             tile = Tile(tilePoly, sigma)
             # print(tilePoly)
             # print(tile.address)
-            for existingPolygon in polygons:
-                tile.subtract(existingPolygon)
-            polygons.append(tile)
+            otherPolys = unary_union([tile.polygon for tile in polygons])
+            tile.subtract(otherPolys)
+            if not tile.polygon.is_empty:
+                polygons.append(tile)
         self.iterations[k] = polygons
         return polygons
     
