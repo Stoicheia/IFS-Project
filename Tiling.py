@@ -40,28 +40,29 @@ class Tiling:
             
     def calculateIteration(self, k):
         polygons = []
-        print(f"k = {k} - attr:", self.attractor)
+        # print(f"k = {k} - attr:", self.attractor)
         if k == 0:
             return [Tile(a, []) for a in self.attractor] 
         addresses = self.omegaK(k)
         bigPolyVertices = self.attractor[0].exterior.coords
         # print(self.attractor.polygon)
-        print(self.theta)
+        # print(self.theta)
         
+        print(addresses)
         for sigma in addresses:
             projectionMatrix = np.eye(3)
             for i in sigma:
-                projectionMatrix = np.matmul(projectionMatrix, self.IFS[i].matrix)
+                projectionMatrix = np.matmul(projectionMatrix, self.IFS[i - 1].matrix)
             for j in self.theta[0:k]:
-                projectionMatrix = np.matmul(self.IFS[j].matrixInverse, projectionMatrix)
+                projectionMatrix = np.matmul(self.IFS[j - 1].matrixInverse, projectionMatrix)
             vertices = []
             for vertex in bigPolyVertices:
                 vertices.append(np.matmul(projectionMatrix, np.array([vertex[0], vertex[1], 1])))
             twoVertices = [(v[0], v[1]) for v in vertices]
             tilePoly = Polygon(twoVertices)
             tile = Tile(tilePoly, sigma)
-            print(tilePoly)
-            print(tile.address)
+            # print(tilePoly)
+            # print(tile.address)
             for existingPolygon in polygons:
                 tile.subtract(existingPolygon)
             polygons.append(tile)
@@ -76,13 +77,13 @@ class Tiling:
     
     def omegaKPartial(self, root, target):
         result = []
-        rootSum = sum(self.IFS[k].scaling for k in root)
+        rootSum = sum(self.IFS[k - 1].scaling for k in root)
         if(rootSum > target):
             return []
-        for i in range(self.sigma):
+        for i in range(1, self.sigma + 1): # IFS = [f1, f2, f3] -> range(1, 4) = (1, 2, 3)
             rootPlusOne = root.copy()
             rootPlusOne.append(i)
-            newSum = rootSum + self.IFS[i].scaling
+            newSum = rootSum + self.IFS[i - 1].scaling
             if newSum >= target:
                 result += [rootPlusOne]
             else:
