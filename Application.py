@@ -31,6 +31,8 @@ class Application:
         self.fig, self.ax = plt.subplots()
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
+        self.xb = [-1, 3]
+        self.yb = [-1, 3]
         self.toolbar = NavigationToolbar2Tk(self.canvas, self.root)
         self.toolbar.update()
         self.toolbar.pack(side=tk.TOP, fill=tk.BOTH)
@@ -91,6 +93,12 @@ class Application:
         self.jump_iter_button = tk.Button(jump_frame, text = "=>", command = iter_jump)
         self.jump_iter_button.pack(side = tk.BOTTOM)
 
+    def xlim(self, x_bounds):
+        return self.ax.set_xlim(x_bounds[0], x_bounds[1])
+
+    def ylim(self, y_bounds):
+        return self.ax.set_ylim(y_bounds[0], y_bounds[1])
+
     def updateIFS(self, ifs_parameters):
         IFS, A, theta = ifs_parameters
         if len(IFS) > 1:
@@ -136,6 +144,8 @@ class Application:
             self.set_iteration(self.iteration + 1)
         
     def plot_iteration(self, iteration):
+        self.xb = self.ax.get_xlim(); print(self.xb)
+        self.yb = self.ax.get_ylim();print(self.yb)
         self.ax.clear()
         self.ax.set_title("Iteration {}".format(self.iteration))
 
@@ -151,6 +161,7 @@ class Application:
                     pltPoly = plt.Polygon(pol.exterior.coords[:-1], facecolor = col, alpha = 0.5)
             self.ax.add_patch(pltPoly)
 
+        self.xlim(self.xb); self.ylim(self.yb)
         self.canvas.draw()
         
     def run(self):
