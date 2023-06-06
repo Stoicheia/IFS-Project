@@ -72,5 +72,14 @@ class Parser:
 
 		return [IFS, A, theta]
 
+	@staticmethod
+	def convert(IFSList, attractors):
+		# TODO: import graphVertex and graphEdge
+		vertices = [graphVertex(a) for a in attractors]
+		edges = []
+		for func in IFSList:
+			edges.append(graphEdge(func.edges[0], func.edges[1], func))
+
+		return vertices, edges
 
 
