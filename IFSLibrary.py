@@ -8,6 +8,7 @@ Created on Sun Apr 30 16:53:40 2023
 from shapely.geometry import Polygon
 import numpy as np
 from numpy.linalg import inv
+from shapely.errors import GEOSException 
 
 class Tile:
     
@@ -16,7 +17,11 @@ class Tile:
         self.address = address
         
     def subtract(self, otherPoly):
-        self.__init__(self.polygon.difference(otherPoly), self.address)
+        try:
+            newPoly = self.polygon.difference(otherPoly)
+            self.__init__(newPoly, self.address)
+        except GEOSException: # Sometimes it will raise a TopologyException when computing differences between two lines
+            pass
 
 
 class IFSfunc:
