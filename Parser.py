@@ -28,6 +28,10 @@ class Parser:
 		r = data['rotation']
 		s = Parser.base_scaling**data['scaling']
 		t = data['translation']
+		if 'edge' in data:
+			edge = data['edge']
+		else:
+			edge = [0,0]
 
 		c = pi/180 # Degrees -> radians conversion factor
 
@@ -43,7 +47,7 @@ class Parser:
 			[0, 0, 1]
 		])
 
-		return IFSfunc(scaling = data['scaling'], matrix = matrix)
+		return IFSfunc(scaling = data['scaling'], matrix = matrix, edge = e)
 	
 	@staticmethod
 	def parseIFS(data):

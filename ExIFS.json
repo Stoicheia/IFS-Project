@@ -3,17 +3,20 @@
 		{
 			"rotation": 0,
 			"scaling" : 1,
-			"translation": [0.124108280347, 0.38196601125]
+			"translation": [0.124108280347, 0.38196601125],
+			"edge" : [0,0]
 		},
 		{
 			"rotation": 108,
 			"scaling" : 1,
-			"translation": [0.649839392466, 0]
+			"translation": [0.649839392466, 0],
+			"edge" : [0,0]
 		},
 		{
 			"rotation": 144,
 			"scaling" : 1,
-			"translation": [0.525731112119, 0.38196601125]
+			"translation": [0.525731112119, 0.38196601125],
+			"edge" : [0,0]
 		}
 	],
 	"A": [

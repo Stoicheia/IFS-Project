@@ -25,9 +25,10 @@ class Tile:
 
 
 class IFSfunc:
-    def __init__(self, scaling, matrix):
+    def __init__(self, scaling, matrix, edge = [0,0]):
         self.scaling = scaling
         self.matrix = matrix
+        self.edge = edge
         self.matrixInverse = inv(matrix)
     
     def apply(self, x, y):

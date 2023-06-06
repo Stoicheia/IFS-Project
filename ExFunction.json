@@ -1,5 +1,5 @@
 {		// Graph can import functions
 	"rotation": 30,				// rotation in degrees
-	"scaling" : 0.5,			// 0 < scaling < 1
+	"scaling" : 1,			// integer number
 	"translation": [0.3, 1]     // in the form (x, y)
 }
