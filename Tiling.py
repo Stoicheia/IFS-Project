@@ -4,7 +4,8 @@ Created on Sun Apr 30 16:42:56 2023
 
 @author: pieis
 """
-
+from shapely.geometry import Polygon
+from shapely.ops import unary_union
 import numpy as np
 from IFSLibrary import Tile
 
@@ -26,9 +27,8 @@ class Tiling:
         self.sumTheta = []
         self.iterations = []
         for i in range(len(theta)):
-            s = sum([self.IFS[k].scaling for k in theta[0:i]])
+            s = sum([self.IFS[k-1].scaling for k in theta[0:i]])
             self.sumTheta.append(s)
-
             
     def getIteration(self, k):
         for i in range(len(self.iterations), k + 1):
@@ -41,54 +41,58 @@ class Tiling:
             
     def calculateIteration(self, k):
         polygons = []
+        # print(f"k = {k} - attr:", self.attractor)
+        if k == 0:
+            return [Tile(a, []) for a in self.attractor] 
         addresses = self.omegaK(k)
-        bigPolyVertices = self.attractor.polygon.exterior.coords
-        print(self.attractor.polygon)
-        print(theta)
+        bigPolyVertices = self.attractor[0].exterior.coords
+        # print(self.attractor.polygon)
+        # print(self.theta)
         
+        # print(addresses)
         for sigma in addresses:
             projectionMatrix = np.eye(3)
             for i in sigma:
-                projectionMatrix = np.matmul(projectionMatrix, self.IFS[i].matrix)
+                projectionMatrix = np.matmul(projectionMatrix, self.IFS[i - 1].matrix)
             for j in self.theta[0:k]:
-                projectionMatrix = np.matmul(self.IFS[j].matrixInverse, projectionMatrix)
+                projectionMatrix = np.matmul(self.IFS[j - 1].matrixInverse, projectionMatrix)
             vertices = []
             for vertex in bigPolyVertices:
                 vertices.append(np.matmul(projectionMatrix, np.array([vertex[0], vertex[1], 1])))
             twoVertices = [(v[0], v[1]) for v in vertices]
             tilePoly = Polygon(twoVertices)
             tile = Tile(tilePoly, sigma)
-            print(tilePoly)
-            print(tile.address)
-            for existingPolygon in polygons:
-                tile.subtract(existingPolygon)
-            polygons.append(tile)
+            # print(tilePoly)
+            # print(tile.address)
+            for poly in [tile.polygon for tile in polygons]:
+                if tile.polygon.is_empty: break
+                tile.subtract(poly)
+
+            if not tile.polygon.is_empty:
+                polygons.append(tile)
         self.iterations[k] = polygons
         return polygons
-            
-            
     
     def omegaK(self, k):
-        return self.omegaKPartial([], self.sumTheta[k])
+        if k > 0:
+            return self.omegaKPartial([], self.sumTheta[k])
+        elif k == 0:
+            return []
     
     def omegaKPartial(self, root, target):
         result = []
-        rootSum = sum(self.IFS[k].scaling for k in root)
+        rootSum = sum(self.IFS[k - 1].scaling for k in root)
         if(rootSum > target):
             return []
-        for i in range(self.sigma):
+        for i in range(1, self.sigma + 1): # IFS = [f1, f2, f3] -> range(1, 4) = (1, 2, 3)
             rootPlusOne = root.copy()
             rootPlusOne.append(i)
-            newSum = rootSum + self.IFS[i].scaling
+            newSum = rootSum + self.IFS[i - 1].scaling
             if newSum >= target:
                 result += [rootPlusOne]
             else:
                 result += self.omegaKPartial(rootPlusOne, target)
         return result
-    
-    
-    
-    
 
 if __name__ == "__main__":
     from IFSLibrary import IFSfunc
