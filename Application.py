@@ -1,5 +1,5 @@
 import tkinter as tk
-from shapely.geometry import Polygon, MultiPolygon
+from shapely.geometry import Polygon, MultiPolygon, Point
 from tkinter import filedialog
 import json
 import matplotlib.pyplot as plt
