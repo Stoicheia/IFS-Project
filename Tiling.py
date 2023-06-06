@@ -10,18 +10,14 @@ import numpy as np
 from IFSLibrary import Tile
 
 class Tiling:
-    def __init__(self, IFS, attractor, theta):
+    def __init__(self, IFSgraph, theta):
         # IFS a list of [IFSfunc]. IFSfunc has scaling, apply and applyinv
-        self.IFS = IFS
-
-        # List of polygons
-        self.attractor = attractor
+        self.IFSgraph = IFSgraph
 
         # List of integers
         self.theta = theta
 
         self.thetaLength = len(theta)
-        self.sigma = len(IFS)
 
         # List of theta sums
         self.sumTheta = []
@@ -44,13 +40,15 @@ class Tiling:
         # print(f"k = {k} - attr:", self.attractor)
         if k == 0:
             return [Tile(a, []) for a in self.attractor] 
-        addresses = self.omegaK(k)
-        bigPolyVertices = self.attractor[0].exterior.coords
+        addresses = self.IFSgraph.omegaK(k, theta)
+        # bigPolyVertices = self.attractor[0].exterior.coords
         # print(self.attractor.polygon)
         # print(self.theta)
         
         # print(addresses)
         for sigma in addresses:
+            initialPoly = self.IFSgraph.getPoly(self.IFSgraph.edges[sigma[-1]].toIndex)
+            bigPolyVertices = initialPoly.exterior.coords
             projectionMatrix = np.eye(3)
             for i in sigma:
                 projectionMatrix = np.matmul(projectionMatrix, self.IFS[i - 1].matrix)
@@ -72,27 +70,6 @@ class Tiling:
             polygons.append(tile)
         self.iterations[k] = polygons
         return polygons
-    
-    def omegaK(self, k):
-        if k > 0:
-            return self.omegaKPartial([], self.sumTheta[k])
-        elif k == 0:
-            return []
-    
-    def omegaKPartial(self, root, target):
-        result = []
-        rootSum = sum(self.IFS[k - 1].scaling for k in root)
-        if(rootSum > target):
-            return []
-        for i in range(1, self.sigma + 1): # IFS = [f1, f2, f3] -> range(1, 4) = (1, 2, 3)
-            rootPlusOne = root.copy()
-            rootPlusOne.append(i)
-            newSum = rootSum + self.IFS[i - 1].scaling
-            if newSum >= target:
-                result += [rootPlusOne]
-            else:
-                result += self.omegaKPartial(rootPlusOne, target)
-        return result
 
 if __name__ == "__main__":
     from IFSLibrary import IFSfunc
