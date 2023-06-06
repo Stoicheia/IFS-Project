@@ -49,7 +49,7 @@ class Tiling:
         # print(self.attractor.polygon)
         # print(self.theta)
         
-        print(addresses)
+        # print(addresses)
         for sigma in addresses:
             projectionMatrix = np.eye(3)
             for i in sigma:
@@ -64,8 +64,10 @@ class Tiling:
             tile = Tile(tilePoly, sigma)
             # print(tilePoly)
             # print(tile.address)
-            otherPolys = unary_union([tile.polygon for tile in polygons])
-            tile.subtract(otherPolys)
+            for poly in [tile.polygon for tile in polygons]:
+                if tile.polygon.is_empty: break
+                tile.subtract(poly)
+
             if not tile.polygon.is_empty:
                 polygons.append(tile)
         self.iterations[k] = polygons
