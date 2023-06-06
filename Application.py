@@ -29,6 +29,7 @@ class Application:
         
         # Create matplotlib plot
         self.fig, self.ax = plt.subplots()
+        self.ax.set_aspect('equal')
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.root)
         self.canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
         self.xb = [-1, 3]
@@ -42,6 +43,28 @@ class Application:
         self.panel.pack(side=tk.RIGHT, fill=tk.Y)
         self.init_side_panel(self.panel)
         self.toolbar._message_label.pack_forget()
+        self.setup_address_hover(self.panel)
+
+    def setup_address_hover(self, frame):
+        self.addr_label = tk.Label(frame, text="Polygon Address: ")
+        self.addr_label.pack(side = tk.TOP)
+
+        def update_polygon_info(event, text):
+            # Get the coordinates of the mouse pointer
+            x, y = event.xdata, event.ydata
+            if x == None or y == None: return
+            p = Point(x,y)
+
+            # Check if the mouse pointer is inside any polygon
+            for tile in self.tiles:
+                if tile.polygon.contains(p):
+                    text.config(text=f"Polygon Address: {tile.address}")
+                    return
+
+            # If no polygon is under the mouse pointer, clear the info label
+            text.config(text="Polygon Address: ")
+        self.canvas.mpl_connect("motion_notify_event", lambda ev : update_polygon_info(ev, self.addr_label))
+
 
     def init_side_panel(self, frame):
         ###############################
@@ -151,9 +174,9 @@ class Application:
         self.ax.set_title("Iteration {}".format(self.iteration))
 
         # Plot each of the polygons provided in the 
-        tiles = self.tiling.getIteration(iteration)
-        tiles.reverse()
-        for i, tile in enumerate(tiles):
+        self.tiles = self.tiling.getIteration(iteration)
+        self.tiles.reverse()
+        for i, tile in enumerate(self.tiles):
             poly = tile.polygon
             if type(poly) == Polygon: 
                 pltPoly = plt.Polygon(poly.exterior.coords[:-1], facecolor = np.random.rand(3,), alpha = 1)
