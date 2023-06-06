@@ -33,15 +33,16 @@ class Application:
         self.canvas.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH, expand=1)
         self.xb = [-1, 3]
         self.yb = [-1, 3]
-        self.toolbar = NavigationToolbar2Tk(self.canvas, self.root)
-        self.toolbar.update()
-        self.toolbar.pack(side=tk.TOP, fill=tk.BOTH)
 
         # Create side panel
         self.panel = tk.Frame(self.root)
+        self.toolbar = NavigationToolbar2Tk(self.canvas, self.panel, pack_toolbar=False)
+        self.toolbar.update()
+        self.toolbar.pack(side=tk.TOP)
         self.panel.pack(side=tk.RIGHT, fill=tk.Y)
         self.init_side_panel(self.panel)
-        
+        self.toolbar._message_label.pack_forget()
+
     def init_side_panel(self, frame):
         ###############################
         # Iteration Control
@@ -151,10 +152,11 @@ class Application:
 
         # Plot each of the polygons provided in the 
         tiles = self.tiling.getIteration(iteration)
+        tiles.reverse()
         for i, tile in enumerate(tiles):
             poly = tile.polygon
             if type(poly) == Polygon: 
-                pltPoly = plt.Polygon(poly.exterior.coords[:-1], facecolor = np.random.rand(3,), alpha = 0.5)
+                pltPoly = plt.Polygon(poly.exterior.coords[:-1], facecolor = np.random.rand(3,), alpha = 1)
             elif type(poly) == MultiPolygon:
                 col = np.random.rand(3,)
                 for pol in poly.geoms:

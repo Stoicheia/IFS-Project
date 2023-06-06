@@ -64,12 +64,12 @@ class Tiling:
             tile = Tile(tilePoly, sigma)
             # print(tilePoly)
             # print(tile.address)
-            for poly in [tile.polygon for tile in polygons]:
-                if tile.polygon.is_empty: break
-                tile.subtract(poly)
+            # for poly in [tile.polygon for tile in polygons]:
+                # if tile.polygon.is_empty: break
+                # tile.subtract(poly)
 
-            if not tile.polygon.is_empty:
-                polygons.append(tile)
+            # if not tile.polygon.is_empty:
+            polygons.append(tile)
         self.iterations[k] = polygons
         return polygons
     
