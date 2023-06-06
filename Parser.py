@@ -47,6 +47,9 @@ class Parser:
 	
 	@staticmethod
 	def parseIFS(data):
+		if 'base_scaling' in data.keys():
+			Parser.base_scaling = data['base_scaling']
+		
 		IFS = []
 		for func in data['IFS']:
 			IFS.append(Parser.parseFunction(func))

@@ -15,11 +15,8 @@ class Tile:
         self.polygon = polygon
         self.address = address
         
-    def subtract(self, other):
-        if self.polygon.within(other.polygon):
-            print("ERRRRRRRRRRRRRRRR")
-            print(self.polygon.difference(other.polygon))
-        self.__init__(self.polygon.difference(other.polygon), self.address)
+    def subtract(self, otherPoly):
+        self.__init__(self.polygon.difference(otherPoly), self.address)
 
 
 class IFSfunc:
