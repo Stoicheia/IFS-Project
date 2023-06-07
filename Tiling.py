@@ -47,20 +47,20 @@ class Tiling:
         
         #print(addresses)
         for sigma in addresses:
-            print(sigma)
+            #print(sigma)
             initialPoly = self.IFSgraph.getPoly(self.IFSgraph.edges[sigma[-1]].toIndex)
             bigPolyVertices = initialPoly.exterior.coords
             projectionMatrix = np.eye(3)
             s = sigma.copy()
             s.reverse()
-            print("s",s)
+            #print("s",s)
             for i in sigma:
                 projectionMatrix = np.matmul(projectionMatrix, self.IFSgraph.edges[i].func.matrix)
             thetak = self.theta[0:k]
             thetak.reverse()
             for j in thetak:
                 projectionMatrix = np.matmul(self.IFSgraph.edges[j].func.matrixInverse, projectionMatrix)
-            print(projectionMatrix)
+            #print(projectionMatrix)
             vertices = []
             for vertex in bigPolyVertices:
                 vertices.append(np.matmul(projectionMatrix, np.array([vertex[0], vertex[1], 1])))
@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
     # Generate Theta
     theta = [randint(0, IFSNumber-1) for i in IFS]
-    print(theta)
+    #print(theta)
 
    # t = Tiling(IFSgraph = IFSgraph, theta = theta)
     #print(t.getIteration(1))
