@@ -45,7 +45,7 @@ class Tiling:
         # print(self.attractor.polygon)
         # print(self.theta)
         
-        print(addresses)
+        #print(addresses)
         for sigma in addresses:
             print(sigma)
             initialPoly = self.IFSgraph.getPoly(self.IFSgraph.edges[sigma[-1]].toIndex)

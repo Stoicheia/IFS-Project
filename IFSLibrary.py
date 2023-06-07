@@ -68,8 +68,6 @@ class IFSgraph:
             self.vertices[edge.fromIndex].addEdgeOutgoing(i)
             self.vertices[edge.fromIndex].addEdgeIngoing(i)
         self.sigma = len(edges)
-        print(vertices)
-        print(edges)
 
         
     def getAdjacentEdges(self, vertexIndex):
