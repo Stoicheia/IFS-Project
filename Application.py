@@ -16,13 +16,12 @@ def colourMap(n, name = 'hsv'):
 
 
 class Application:
-    def __init__(self, IFS = [], attractor = [], theta = []):
-        self.IFS = IFS
-        self.A = attractor
+    def __init__(self, IFSgraph = [], theta = []):
+        self.IFSgraph = IFSgraph
         self.theta = theta
 
         self.iteration = 0
-        self.tiling = Tiling(self.IFS, self.A, self.theta)
+        self.tiling = Tiling(self.IFS, self.theta)
         
         self.root = tk.Tk()
         self.root.title("Graph IFS Plotter")
@@ -131,7 +130,7 @@ class Application:
             self.theta = theta
         else: 
             self.IFS.append(IFS[0])
-        self.tiling = Tiling(IFS, A, theta)
+        self.tiling = Tiling(IFSgraph, theta)
         self.set_iteration(0)
 
     def validate_input(self):
@@ -244,6 +243,6 @@ class IFSInput:
 
 if __name__ == "__main__":
     default = "ExIFS.json"
-    [IFS, attractor, theta] = Parser.parse(default)
-    app = Application(IFS, attractor, theta)
+    [IFSgraph, theta] = Parser.parse(default)
+    app = Application(IFSgraph, theta)
     app.run()
