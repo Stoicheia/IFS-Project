@@ -21,7 +21,7 @@ class Application:
         self.theta = theta
 
         self.iteration = 0
-        self.tiling = Tiling(self.IFS, self.theta)
+        self.tiling = Tiling(self.IFSgraph, self.theta)
         
         self.root = tk.Tk()
         self.root.title("Graph IFS Plotter")
@@ -56,7 +56,7 @@ class Application:
 
             # Check if the mouse pointer is inside any polygon
             for tile in self.tiles:
-                if tile.polygon.contains(p):
+                if tile.polygon.polygon.contains(p):
                     text.config(text=f"Polygon Address: {tile.address}")
                     return
 
@@ -125,11 +125,11 @@ class Application:
     def updateIFS(self, ifs_parameters):
         IFS, A, theta = ifs_parameters
         if len(IFS) > 1:
-            self.IFS = IFS
+            self.IFSgraph = IFS
             self.A = A
             self.theta = theta
         else: 
-            self.IFS.append(IFS[0])
+            self.IFSgraph.append(IFS[0])
         self.tiling = Tiling(IFSgraph, theta)
         self.set_iteration(0)
 
@@ -183,6 +183,8 @@ class Application:
                 col = np.random.rand(3,)
                 for pol in poly.geoms:
                     pltPoly = plt.Polygon(pol.exterior.coords[:-1], facecolor = col, alpha = 0.5)
+            else:
+                print(type(poly))
             self.ax.add_patch(pltPoly)
 
         self.xlim(self.xb); self.ylim(self.yb)
@@ -243,6 +245,7 @@ class IFSInput:
 
 if __name__ == "__main__":
     default = "ExIFS.json"
-    [IFSgraph, theta] = Parser.parse(default)
+    [IFS, A, theta] = Parser.parse(default)
+    IFSgraph = Parser.convert(IFS,A)
     app = Application(IFSgraph, theta)
     app.run()

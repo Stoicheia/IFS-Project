@@ -3,7 +3,7 @@ from math import cos, sin, pi, sqrt
 import numpy as np
 from shapely.geometry import Polygon
 
-from IFSLibrary import IFSfunc
+from IFSLibrary import *
 
 class Parser:
 	base_scaling = 2/(1 + sqrt(5))      #  = 0.618033988749
@@ -47,7 +47,7 @@ class Parser:
 			[0, 0, 1]
 		])
 
-		return IFSfunc(scaling = data['scaling'], matrix = matrix, edge = e)
+		return IFSfunc(scaling = data['scaling'], matrix = matrix, edge = edge)
 	
 	@staticmethod
 	def parseIFS(data):
@@ -78,8 +78,9 @@ class Parser:
 		vertices = [graphVertex(a) for a in attractors]
 		edges = []
 		for func in IFSList:
-			edges.append(graphEdge(func.edges[0], func.edges[1], func))
+			print(func.edge)
+			edges.append(graphEdge(func.edge[0], func.edge[1], func))
 
-		return vertices, edges
+		return IFSgraph(vertices, edges)
 
 

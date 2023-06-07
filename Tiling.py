@@ -23,7 +23,7 @@ class Tiling:
         self.sumTheta = []
         self.iterations = []
         for i in range(len(theta)):
-            s = sum([self.IFS[k-1].scaling for k in theta[0:i]])
+            s = sum([self.IFSgraph.edges[k-1].func.scaling for k in theta[0:i]])
             self.sumTheta.append(s)
             
     def getIteration(self, k):
@@ -39,21 +39,22 @@ class Tiling:
         polygons = []
         # print(f"k = {k} - attr:", self.attractor)
         if k == 0:
-            return [Tile(a, []) for a in self.attractor] 
-        addresses = self.IFSgraph.omegaK(k, theta)
+            return [Tile(a, []) for a in self.IFSgraph.vertices] 
+        addresses = self.IFSgraph.omegaK(k, self.theta)
         # bigPolyVertices = self.attractor[0].exterior.coords
         # print(self.attractor.polygon)
         # print(self.theta)
         
-        # print(addresses)
+        print(addresses)
         for sigma in addresses:
+            print(sigma)
             initialPoly = self.IFSgraph.getPoly(self.IFSgraph.edges[sigma[-1]].toIndex)
             bigPolyVertices = initialPoly.exterior.coords
             projectionMatrix = np.eye(3)
             for i in sigma:
-                projectionMatrix = np.matmul(projectionMatrix, self.IFS[i - 1].matrix)
+                projectionMatrix = np.matmul(projectionMatrix, self.IFSgraph.edges[i - 1].func.matrix)
             for j in self.theta[0:k]:
-                projectionMatrix = np.matmul(self.IFS[j - 1].matrixInverse, projectionMatrix)
+                projectionMatrix = np.matmul(self.IFSgraph.edges[j - 1].func.matrixInverse, projectionMatrix)
             vertices = []
             for vertex in bigPolyVertices:
                 vertices.append(np.matmul(projectionMatrix, np.array([vertex[0], vertex[1], 1])))

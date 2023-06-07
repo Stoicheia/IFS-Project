@@ -60,7 +60,6 @@ class graphEdge:
         self.func = func
         
 class IFSgraph:
-    
     def __init__(self, vertices, edges):
         self.vertices = vertices
         self.edges = edges
@@ -85,7 +84,7 @@ class IFSgraph:
         thetaSum = sum([self.getFunc(j).scaling for j in theta[0:k]])
         allPaths = []
         if k > 0:
-            allPaths.append(self.omegaKPartial([], thetaSum, self.edges[theta[-1]].toIndex))
+            allPaths += self.omegaKPartial([], thetaSum, self.edges[theta[-1]].toIndex)
             return allPaths
         elif k == 0:
             return []
