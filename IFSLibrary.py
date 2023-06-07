@@ -66,7 +66,7 @@ class IFSgraph:
         for i in range(len(self.edges)):
             edge = self.edges[i]
             self.vertices[edge.fromIndex].addEdgeOutgoing(i)
-            self.vertices[edge.fromIndex].addEdgeIngoing(i)
+            self.vertices[edge.toIndex].addEdgeIngoing(i)
         self.sigma = len(edges)
 
         
@@ -84,7 +84,7 @@ class IFSgraph:
         thetaSum = sum([self.getFunc(j).scaling for j in theta[0:k]])
         allPaths = []
         if k > 0:
-            allPaths += self.omegaKPartial([], thetaSum, self.edges[theta[-1]].toIndex)
+            allPaths += self.omegaKPartial([], thetaSum, self.edges[theta[k-1]].toIndex)
             return allPaths
         elif k == 0:
             return []
@@ -95,6 +95,7 @@ class IFSgraph:
         if(rootSum > target):
             return []
         for i in self.vertices[vIndex].ingoing: # IFS = [f1, f2, f3] -> range(1, 4) = (1, 2, 3)
+            print(vIndex, self.vertices[vIndex].ingoing)
             rootPlusOne = root.copy()
             rootPlusOne.append(i)
             newSum = rootSum + self.getFunc(i).scaling
