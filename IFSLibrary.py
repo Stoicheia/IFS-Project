@@ -94,14 +94,14 @@ class IFSgraph:
         rootSum = sum(self.getFunc(k).scaling for k in root)
         if(rootSum > target):
             return []
-        for i in self.vertices[vIndex].ingoing: # IFS = [f1, f2, f3] -> range(1, 4) = (1, 2, 3)
-            print(vIndex, self.vertices[vIndex].ingoing)
+        for i in self.vertices[vIndex].outgoing: # IFS = [f1, f2, f3] -> range(1, 4) = (1, 2, 3)
+            print(vIndex, self.vertices[vIndex].outgoing)
             rootPlusOne = root.copy()
             rootPlusOne.append(i)
             newSum = rootSum + self.getFunc(i).scaling
             if newSum >= target:
                 result += [rootPlusOne]
             else:
-                result += self.omegaKPartial(rootPlusOne, target, self.edges[i].fromIndex)
+                result += self.omegaKPartial(rootPlusOne, target, self.edges[i].toIndex)
         return result
         

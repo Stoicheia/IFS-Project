@@ -52,7 +52,7 @@ class Tiling:
             bigPolyVertices = initialPoly.exterior.coords
             projectionMatrix = np.eye(3)
             for i in sigma:
-                projectionMatrix = np.matmul(projectionMatrix, self.IFSgraph.edges[i].func.matrix)
+                projectionMatrix = np.matmul(self.IFSgraph.edges[i].func.matrix, projectionMatrix)
             for j in self.theta[0:k]:
                 projectionMatrix = np.matmul(self.IFSgraph.edges[j].func.matrixInverse, projectionMatrix)
             vertices = []
