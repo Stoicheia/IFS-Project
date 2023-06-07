@@ -104,6 +104,6 @@ if __name__ == "__main__":
     theta = [randint(0, IFSNumber-1) for i in IFS]
     print(theta)
 
-    t = Tiling(IFS = IFS, attractor = attractor, theta = theta)
+    t = Tiling(IFSgraph = IFSgraph, theta = theta)
     print(t.getIteration(1))
 
