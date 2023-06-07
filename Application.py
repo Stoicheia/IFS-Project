@@ -55,7 +55,9 @@ class Application:
             p = Point(x,y)
 
             # Check if the mouse pointer is inside any polygon
-            for tile in self.tiles:
+            t = self.tiles.copy()
+            t.reverse()
+            for tile in t:
                 if tile.polygon.contains(p):
                     text.config(text=f"Polygon Address: {tile.address}")
                     return
