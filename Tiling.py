@@ -55,6 +55,7 @@ class Tiling:
                 projectionMatrix = np.matmul(projectionMatrix, self.IFSgraph.edges[i].func.matrix)
             for j in self.theta[0:k]:
                 projectionMatrix = np.matmul(self.IFSgraph.edges[j].func.matrixInverse, projectionMatrix)
+            print(projectionMatrix)
             vertices = []
             for vertex in bigPolyVertices:
                 vertices.append(np.matmul(projectionMatrix, np.array([vertex[0], vertex[1], 1])))

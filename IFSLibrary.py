@@ -95,7 +95,6 @@ class IFSgraph:
         if(rootSum > target):
             return []
         for i in self.vertices[vIndex].outgoing: # IFS = [f1, f2, f3] -> range(1, 4) = (1, 2, 3)
-            print(vIndex, self.vertices[vIndex].outgoing)
             rootPlusOne = root.copy()
             rootPlusOne.append(i)
             newSum = rootSum + self.getFunc(i).scaling

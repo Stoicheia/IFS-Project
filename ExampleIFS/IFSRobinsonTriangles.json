@@ -10,7 +10,7 @@
 			"rotation": -108,
 			"scaling" : 1,
 			"translation": [0.5, 0.363271264003],
-			"edge" : [0,1]
+			"edge" : [1,0]
 		},
 		{
 			"rotation": -108,
@@ -22,7 +22,7 @@
 			"rotation": -144,
 			"scaling" : 1,
 			"translation": [0.5, 0.363271264003],
-			"edge" : [1,0]
+			"edge" : [0,1]
 		}
 	],
 	"A": [
