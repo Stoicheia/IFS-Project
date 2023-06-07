@@ -244,7 +244,7 @@ class IFSInput:
 
 
 if __name__ == "__main__":
-    default = "ExIFS.json"
+    default = "ExampleIFS/IFSRobinsonTriangles.json"
     [IFS, A, theta] = Parser.parse(default)
     IFSgraph = Parser.convert(IFS,A)
     app = Application(IFSgraph, theta)
