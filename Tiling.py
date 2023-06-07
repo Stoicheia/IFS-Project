@@ -39,7 +39,7 @@ class Tiling:
         polygons = []
         # print(f"k = {k} - attr:", self.attractor)
         if k == 0:
-            return [Tile(self.IFSgraph.vertices[self.IFSgraph.edges[self.theta[0]].fromIndex].polygon, [])] 
+            return [Tile(self.IFSgraph.vertices[self.IFSgraph.edges[self.theta[0] - 1].fromIndex].polygon, [])] 
         addresses = self.IFSgraph.omegaK(k, self.theta)
         # bigPolyVertices = self.attractor[0].exterior.coords
         # print(self.attractor.polygon)
