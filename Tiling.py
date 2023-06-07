@@ -55,10 +55,9 @@ class Tiling:
             s.reverse()
             print("s",s)
             for i in sigma:
-                projectionMatrix = np.matmul(self.IFSgraph.edges[i].func.matrix, projectionMatrix)
+                projectionMatrix = np.matmul(projectionMatrix, self.IFSgraph.edges[i].func.matrix)
             thetak = self.theta[0:k]
             thetak.reverse()
-            print("th", thetak)
             for j in thetak:
                 projectionMatrix = np.matmul(self.IFSgraph.edges[j].func.matrixInverse, projectionMatrix)
             print(projectionMatrix)

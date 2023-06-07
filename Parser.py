@@ -78,8 +78,9 @@ class Parser:
 		vertices = [graphVertex(a) for a in attractors]
 		edges = []
 		for func in IFSList:
-			#print(func.matrix)
+			print(func.matrix)
 			edges.append(graphEdge(func.edge[0], func.edge[1], func))
+            
 
 		return IFSgraph(vertices, edges)
 

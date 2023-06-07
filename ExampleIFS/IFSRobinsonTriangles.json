@@ -9,13 +9,13 @@
 		{
 			"rotation": -108,
 			"scaling" : 1,
-			"translation": [0.61803398875, 0],
+			"translation": [0.309016994375, 0.951056516295],
 			"edge" : [0,1]
 		},
 		{
 			"rotation": 0,
 			"scaling" : 1,
-			"translation": [0.309016994375, 0.951056516295],
+			"translation": [0.61803398875, 0],
 			"edge" : [1, 0]
 		},
 		{
