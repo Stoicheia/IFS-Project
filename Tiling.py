@@ -39,7 +39,7 @@ class Tiling:
         polygons = []
         # print(f"k = {k} - attr:", self.attractor)
         if k == 0:
-            return [Tile(self.IFSgraph.vertices[self.IFSgraph.edges[self.theta[0] - 1].fromIndex].polygon, [])] 
+            return [Tile(self.IFSgraph.vertices[self.IFSgraph.edges[self.theta[0]].fromIndex].polygon, [])] 
         addresses = self.IFSgraph.omegaK(k, self.theta)
         # bigPolyVertices = self.attractor[0].exterior.coords
         # print(self.attractor.polygon)
@@ -52,9 +52,9 @@ class Tiling:
             bigPolyVertices = initialPoly.exterior.coords
             projectionMatrix = np.eye(3)
             for i in sigma:
-                projectionMatrix = np.matmul(projectionMatrix, self.IFSgraph.edges[i - 1].func.matrix)
+                projectionMatrix = np.matmul(projectionMatrix, self.IFSgraph.edges[i].func.matrix)
             for j in self.theta[0:k]:
-                projectionMatrix = np.matmul(self.IFSgraph.edges[j - 1].func.matrixInverse, projectionMatrix)
+                projectionMatrix = np.matmul(self.IFSgraph.edges[j].func.matrixInverse, projectionMatrix)
             vertices = []
             for vertex in bigPolyVertices:
                 vertices.append(np.matmul(projectionMatrix, np.array([vertex[0], vertex[1], 1])))

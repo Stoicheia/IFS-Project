@@ -65,7 +65,7 @@ class Parser:
 		# theta = data['theta']
 		theta = []
 		for t in data['theta']:
-			if t > len(IFS) or t < 1: # ERROR: theta_i out of bounds
+			if t >= len(IFS) or t < 0: # ERROR: theta_i out of bounds
 				print(f"ERROR: theta_i is out of bounds.\n\tReceived {t}, but there are only {len(IFS)} functions in the IFS.")
 			else:
 				theta.append(t)

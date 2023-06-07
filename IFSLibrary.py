@@ -68,6 +68,8 @@ class IFSgraph:
             self.vertices[edge.fromIndex].addEdgeOutgoing(i)
             self.vertices[edge.fromIndex].addEdgeIngoing(i)
         self.sigma = len(edges)
+        print(vertices)
+        print(edges)
 
         
     def getAdjacentEdges(self, vertexIndex):
@@ -81,7 +83,7 @@ class IFSgraph:
             
     # gives list of all valid addresses
     def omegaK(self, k, theta):
-        thetaSum = sum([self.getFunc(j - 1).scaling for j in theta[0:k]])
+        thetaSum = sum([self.getFunc(j).scaling for j in theta[0:k]])
         allPaths = []
         if k > 0:
             allPaths += self.omegaKPartial([], thetaSum, self.edges[theta[-1]].toIndex)
@@ -91,16 +93,16 @@ class IFSgraph:
     
     def omegaKPartial(self, root, target, vIndex):
         result = []
-        rootSum = sum(self.getFunc(k - 1).scaling for k in root)
+        rootSum = sum(self.getFunc(k).scaling for k in root)
         if(rootSum > target):
             return []
         for i in self.vertices[vIndex].ingoing: # IFS = [f1, f2, f3] -> range(1, 4) = (1, 2, 3)
             rootPlusOne = root.copy()
             rootPlusOne.append(i)
-            newSum = rootSum + self.getFunc(i - 1).scaling
+            newSum = rootSum + self.getFunc(i).scaling
             if newSum >= target:
                 result += [rootPlusOne]
             else:
-                result += self.omegaKPartial(rootPlusOne, target, self.edges[i - 1].fromIndex)
+                result += self.omegaKPartial(rootPlusOne, target, self.edges[i].fromIndex)
         return result
         
