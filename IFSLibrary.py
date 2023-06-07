@@ -81,7 +81,7 @@ class IFSgraph:
             
     # gives list of all valid addresses
     def omegaK(self, k, theta):
-        thetaSum = sum([self.getFunc(j).scaling for j in theta[0:k]])
+        thetaSum = sum([self.getFunc(j - 1).scaling for j in theta[0:k]])
         allPaths = []
         if k > 0:
             allPaths += self.omegaKPartial([], thetaSum, self.edges[theta[-1]].toIndex)
