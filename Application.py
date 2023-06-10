@@ -233,7 +233,7 @@ class IFSInput:
         values = [entry.get()  for entry in entries]
         for e in entries: # Clear the entries (TODO: only clear if successful entry)
             e.delete(0, tk.END)
-        print(values)
+        #print(values)
 
     def upload(self):
         filename = filedialog.askopenfilename(initialdir=".", title="Select file", filetypes=(("JSON files", "*.json"),))
