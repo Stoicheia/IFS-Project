@@ -37,43 +37,29 @@ class Tiling:
             
     def calculateIteration(self, k):
         polygons = []
-        # print(f"k = {k} - attr:", self.attractor)
         if k == 0:
             return [Tile(self.IFSgraph.vertices[self.IFSgraph.edges[self.theta[0]].fromIndex].polygon, [])] 
         addresses = self.IFSgraph.omegaK(k, self.theta)
-        # bigPolyVertices = self.attractor[0].exterior.coords
-        # print(self.attractor.polygon)
-        # print(self.theta)
         
-        #print(addresses)
         for sigma in addresses:
-            print(sigma)
             initialPoly = self.IFSgraph.getPoly(self.IFSgraph.edges[sigma[-1]].toIndex)
             bigPolyVertices = initialPoly.exterior.coords
             projectionMatrix = np.eye(3)
             s = sigma.copy()
             s.reverse()
-            print("s",s)
             for i in sigma:
                 projectionMatrix = np.matmul(projectionMatrix, self.IFSgraph.edges[i].func.matrix)
             thetak = self.theta[0:k]
-            thetak.reverse()
+            thetak
             for j in thetak:
                 projectionMatrix = np.matmul(self.IFSgraph.edges[j].func.matrixInverse, projectionMatrix)
-            print(projectionMatrix)
             vertices = []
             for vertex in bigPolyVertices:
                 vertices.append(np.matmul(projectionMatrix, np.array([vertex[0], vertex[1], 1])))
             twoVertices = [(v[0], v[1]) for v in vertices]
             tilePoly = Polygon(twoVertices)
             tile = Tile(tilePoly, sigma)
-            # print(tilePoly)
-            # print(tile.address)
-            # for poly in [tile.polygon for tile in polygons]:
-                # if tile.polygon.is_empty: break
-                # tile.subtract(poly)
 
-            # if not tile.polygon.is_empty:
             polygons.append(tile)
         self.iterations[k] = polygons
         return polygons

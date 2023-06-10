@@ -125,13 +125,9 @@ class Application:
         return self.ax.set_ylim(y_bounds[0], y_bounds[1])
 
     def updateIFS(self, ifs_parameters):
-        IFS, A, theta = ifs_parameters
-        if len(IFS) > 1:
-            self.IFSgraph = IFS
-            self.A = A
-            self.theta = theta
-        else: 
-            self.IFSgraph.append(IFS[0])
+        IFSgraph, theta = ifs_parameters
+        self.IFSgraph = IFSgraph
+        self.theta = theta
         self.tiling = Tiling(IFSgraph, theta)
         self.set_iteration(0)
 
@@ -242,8 +238,9 @@ class IFSInput:
     def upload(self):
         filename = filedialog.askopenfilename(initialdir=".", title="Select file", filetypes=(("JSON files", "*.json"),))
         if filename:
-            return Parser.parse(filename)
-
+            [IFS, A, theta] = Parser.parse(filename)
+            IFSgraph = Parser.convert(IFS,A)
+            return (IFSgraph, theta)
 
 if __name__ == "__main__":
     default = "ExampleIFS/IFSRobinsonTriangles.json"
